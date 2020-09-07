@@ -219,14 +219,7 @@ RCT_EXPORT_METHOD(endCall:(NSString *)uuidString)
 
 RCT_EXPORT_METHOD(endAllCalls)
 {
-#ifdef DEBUG
-    NSLog(@"[RNCallKeep][endAllCalls] calls = %@", self.callKeepCallController.callObserver.calls);
-#endif
-    for (CXCall *call in self.callKeepCallController.callObserver.calls) {
-        CXEndCallAction *endCallAction = [[CXEndCallAction alloc] initWithCallUUID:call.UUID];
-        CXTransaction *transaction = [[CXTransaction alloc] initWithAction:endCallAction];
-        [self requestTransaction:transaction];
-    }
+    [RNCallKeep nativeEndAllCalls];
 }
 
 RCT_EXPORT_METHOD(setOnHold:(NSString *)uuidString :(BOOL)shouldHold)
@@ -627,6 +620,19 @@ continueUserActivity:(NSUserActivity *)userActivity
 + (BOOL)requiresMainQueueSetup
 {
     return YES;
+}
+
++ (void)nativeEndAllCalls
+{
+    #ifdef DEBUG
+        NSLog(@"[RNCallKeep][endAllCalls] calls = %@", self.callKeepCallController.callObserver.calls);
+    #endif
+        for (CXCall *call in self.callKeepCallController.callObserver.calls)
+        {
+            CXEndCallAction *endCallAction = [[CXEndCallAction alloc] initWithCallUUID:call.UUID];
+            CXTransaction *transaction = [[CXTransaction alloc] initWithAction:endCallAction];
+            [self requestTransaction:transaction];
+        }
 }
 
 #pragma mark - CXProviderDelegate
