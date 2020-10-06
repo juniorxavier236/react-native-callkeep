@@ -624,14 +624,15 @@ continueUserActivity:(NSUserActivity *)userActivity
 
 + (void)nativeEndAllCalls
 {
+    RNCallKeep* callKeep = [RNCallKeep allocWithZone: nil];
     #ifdef DEBUG
-        NSLog(@"[RNCallKeep][endAllCalls] calls = %@", self.callKeepCallController.callObserver.calls);
+        NSLog(@"[RNCallKeep][endAllCalls] calls = %@", callKeep.callKeepCallController.callObserver.calls);
     #endif
-        for (CXCall *call in self.callKeepCallController.callObserver.calls)
+        for (CXCall *call in callKeep.callKeepCallController.callObserver.calls)
         {
             CXEndCallAction *endCallAction = [[CXEndCallAction alloc] initWithCallUUID:call.UUID];
             CXTransaction *transaction = [[CXTransaction alloc] initWithAction:endCallAction];
-            [self requestTransaction:transaction];
+            [callKeep requestTransaction:transaction];
         }
 }
 
