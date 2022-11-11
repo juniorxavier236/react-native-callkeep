@@ -43,6 +43,7 @@ static NSString *const RNCallKeepDidLoadWithEvents = @"RNCallKeepDidLoadWithEven
     NSMutableArray *_delayedEvents;
 }
 
+static bool isSetupNatively;
 static CXProvider* sharedProvider;
 
 // should initialise in AppDelegate.m
@@ -133,8 +134,25 @@ RCT_EXPORT_MODULE()
     }
 }
 
++ (void)setup:(NSDictionary *)options {
+    RNCallKeep *callKeep = [RNCallKeep allocWithZone: nil];
+    [callKeep setup:options];
+    isSetupNatively = YES;
+}
+
+
 RCT_EXPORT_METHOD(setup:(NSDictionary *)options)
 {
+
+      if (isSetupNatively) {
+#ifdef DEBUG
+        NSLog(@"[RNCallKeep][setup] already setup");
+        RCTLog(@"[RNCallKeep][setup] already setup in native code");
+#endif
+        return;
+    }
+
+
 #ifdef DEBUG
     NSLog(@"[RNCallKeep][setup] options = %@", options);
 #endif
